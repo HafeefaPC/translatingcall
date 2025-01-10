@@ -1,5 +1,10 @@
 import { Server as NetServer } from 'http';
-import { Server as SocketIOServer } from 'socket.io';
+import { Server as SocketIOServer, Socket } from 'socket.io';
+
+interface Signal {
+  type: string;
+  data: any;
+}
 
 export const configureSocketServer = (server: NetServer) => {
   const io = new SocketIOServer(server, {
@@ -11,9 +16,9 @@ export const configureSocketServer = (server: NetServer) => {
     }
   });
 
-  const rooms = new Map();
+  const rooms: Map<string, string> = new Map();
 
-  io.on('connection', (socket) => {
+  io.on('connection', (socket: Socket) => {
     console.log('Client connected:', socket.id);
 
     socket.on('join-room', (roomId: string) => {
@@ -23,7 +28,7 @@ export const configureSocketServer = (server: NetServer) => {
       console.log(`User ${socket.id} joined room ${roomId}`);
     });
 
-    socket.on('signal', ({ userId, signal }: { userId: string; signal: any }) => {
+    socket.on('signal', ({ userId, signal }: { userId: string; signal: Signal }) => {
       io.to(userId).emit('signal', { userId: socket.id, signal });
       console.log(`Signal from ${socket.id} to ${userId}`);
     });
