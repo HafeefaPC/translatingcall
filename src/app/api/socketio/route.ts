@@ -1,7 +1,14 @@
+// src/app/api/socketio/route.ts
+import { NextResponse } from 'next/server';
 import { Server as NetServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 
-export const configureSocketServer = (server: NetServer) => {
+export function GET() {
+  // You can implement your GET logic here if needed
+  return NextResponse.json({ message: "Socket server is up" });
+}
+
+export function setupSocketServer(server: NetServer) {
   const io = new SocketIOServer(server, {
     path: '/api/socketio',
     addTrailingSlash: false,
@@ -32,4 +39,4 @@ export const configureSocketServer = (server: NetServer) => {
   });
 
   return io;
-};
+}
